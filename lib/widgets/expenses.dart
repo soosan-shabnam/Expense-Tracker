@@ -5,8 +5,11 @@ import 'package:tracker/widgets/new_expense.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
+
   @override
-  State<Expenses> createState() => _ExpensesState();
+  State<Expenses> createState() {
+    return _ExpensesState();
+  }
 }
 
 class _ExpensesState extends State<Expenses> {
@@ -24,27 +27,41 @@ class _ExpensesState extends State<Expenses> {
       category: Category.leisure,
     ),
   ];
-  void _openAddExpensesOverlay(){
-    showModalBottomSheet(context: context, builder:(ctx)=> const NewExpense(),
+
+  void _openAddExpenseOverlay() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => NewExpense(onAddExpense: _addExpense),
     );
   }
+
+  void _addExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:Text('Expense Tracker'),
-        actions:[
+        title: const Text('Flutter ExpenseTracker'),
+        actions: [
           IconButton(
-            onPressed:_openAddExpensesOverlay,
-            icon: const Icon(Icons.add),),
+            onPressed: _openAddExpenseOverlay,
+            icon: const Icon(Icons.add),
+          ),
         ],
       ),
-      body: Column(children: [
-        Text('The chart'),
-        Expanded(
-          child: ExpensesList(expenses: _registeredExpenses),
-        ),
-      ]),
+      body: Column(
+        children: [
+          const Text('The chart'),
+          Expanded(
+            child: ExpensesList(expenses: _registeredExpenses),
+          ),
+        ],
+      ),
     );
   }
 }
